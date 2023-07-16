@@ -1,0 +1,32 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkbox state</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('.checkbox').change(function() {
+                var checkbox_name = $(this).attr('name');
+                var checkbox_state = $(this).prop('checked');
+                $('#state-' + checkbox_name).text('Checkbox state: ' + (checkbox_state ? 'Checked' : 'Unchecked'));
+                $.ajax({
+                    url: '/update',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ 'checkbox_name': checkbox_name, 'checkbox_state': checkbox_state }),
+                    success: function(response){
+                        console.log(response);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    {% for checkbox in checkboxes %}
+        <input type="checkbox" class="checkbox" name="{{ checkbox.name }}" {% if checkbox.state %} checked {% endif %}>
+        <p id="state-{{ checkbox.name }}">Checkbox state: {% if checkbox.state %} Checked {% else %} Unchecked {% endif %}</p>
+    {% endfor %}
+</body>
+</html>
